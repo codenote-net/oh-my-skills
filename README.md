@@ -46,6 +46,14 @@ python scripts/text_to_excel.py <input.txt> <output.xlsx> --template <template.x
 
 **Dependencies:** `openpyxl`
 
+### video-to-minutes
+
+Extracts audio and images from a video file, transcribes the audio using Whisper, and generates structured meeting minutes.
+
+**Location:** `.gemini/skills/video-to-minutes/`
+
+**Dependencies:** `ffmpeg`, `openai-whisper`
+
 ## Installation
 
 1. Clone this repository:
@@ -57,7 +65,7 @@ python scripts/text_to_excel.py <input.txt> <output.xlsx> --template <template.x
 
 3. Install Python dependencies as needed:
    ```bash
-   pip install PyPDF2 openpyxl
+   pip install PyPDF2 openpyxl openai-whisper
    ```
 
 ## Project Structure
@@ -70,13 +78,15 @@ oh-my-skills/
 │       │   ├── SKILL.md
 │       │   └── scripts/
 │       │       └── extract_text.py
-│       └── text-to-excel/
-│           ├── SKILL.md
-│           ├── scripts/
-│           │   └── text_to_excel.py
-│           └── references/
-│               ├── excel_template_guide.md
-│               └── parsing_rules_guide.md
+│       ├── text-to-excel/
+│       │   ├── SKILL.md
+│       │   ├── scripts/
+│       │   │   └── text_to_excel.py
+│       │   └── references/
+│       │       ├── excel_template_guide.md
+│       │       └── parsing_rules_guide.md
+│       └── video-to-minutes/
+│           └── SKILL.md
 ├── .claude/
 │   └── settings.local.json
 ├── .qodo/

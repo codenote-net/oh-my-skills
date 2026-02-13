@@ -36,7 +36,7 @@ Confirm successful installation before proceeding.
 ### 2. Get User Input
 
 - **Video File Path:** Ask the user for the full path to the video file they want to process.
-- **Capture Interval:** Ask the user for the desired interval in seconds for capturing images (e.g., 60 for every minute, 300 for every 5 minutes).
+- **Capture Interval:** Ask the user for the desired interval in seconds for capturing images (e.g., 60 for every minute, 300 for every 5 minutes). Suggest a default of `60` seconds. If the user does not specify an interval, ask for confirmation to use `60` seconds.
 
 ### 3. Audio Extraction
 
@@ -49,23 +49,23 @@ ffmpeg -i "<VIDEO_FILE_PATH>" -vn -acodec pcm_s16le -ar 16000 -ac 1 meeting_audi
 - Replace `<VIDEO_FILE_PATH>` with the path provided by the user.
 - The output file will be `meeting_audio.wav`.
 
-### 4. Audio Transcription (User-Assisted)
+### 4. Audio Transcription (Automated)
 
-This is the most critical and time-consuming step. The `whisper` command can take a long time and may time out in the agent's execution environment.
+The skill will automatically run the `whisper` command to transcribe the extracted audio. This process can be lengthy, and the agent will wait for its completion.
 
-**Do not run the `whisper` command directly.** Instead, follow this procedure:
-
-1.  Explain to the user that the transcription process is lengthy and requires them to run a command in their own terminal.
-2.  Provide them with the exact command to run. A good default is to use the `medium` model for a balance of speed and accuracy, and specify the language if known.
-
-**Command to provide to the user:**
+**Command to be executed by the agent:**
 ```bash
-whisper meeting_audio.wav --model medium --language Japanese
+whisper meeting_audio.wav --language ja --model turbo
 ```
-(Adjust the language parameter as needed based on the meeting's language).
+(The skill will use `meeting_audio.wav` and the specified language and model. The language and model can be adjusted if required, but the default will be Japanese and 'turbo' model as per the user's suggestion.)
 
-3.  Ask the user to execute this command in a separate terminal window and wait for it to complete. It will create several files, including `meeting_audio.txt`.
-4.  Use the `ask_user` tool to wait for the user's confirmation that the file has been created successfully before proceeding.
+The `whisper` command will generate several files, including `meeting_audio.txt` in the current working directory. The skill will automatically detect this file upon completion.
+
+### 4.5. Detect Transcription File
+
+1.  The skill will first attempt to find `meeting_audio.txt` in the current working directory.
+2.  If found, its path will be automatically used.
+3.  If not found, the user will be prompted to provide the full path to the `meeting_audio.txt` file.
 
 ### 5. Image Extraction
 
@@ -84,9 +84,13 @@ ffmpeg -i "<VIDEO_FILE_PATH>" -vf fps=1/<INTERVAL_IN_SECONDS> captures/capture_%
 - Replace `<VIDEO_FILE_PATH>` with the user's video path.
 - Replace `<INTERVAL_IN_SECONDS>` with the interval provided by the user.
 
+### 5.5. Collect Proper Nouns
+
+Before generating the meeting minutes, the skill will ask the user to provide a list of key proper nouns (e.g., names of people, companies, products like "重岡", "株式会社ROUTE06", "ProjectX") that are likely to appear in the meeting. This information will be incorporated into the prompt for generating the minutes to improve accuracy and reduce errors in transcription and summarization.
+
 ### 6. Generate Meeting Minutes
 
-1.  Once the user confirms `meeting_audio.txt` is created, read the file's content using `read_file`.
+1.  The content of the `meeting_audio.txt` will be used for transcription.
 2.  List the newly created image files in the `captures` directory.
 3.  Analyze the transcript to identify participants, key topics, decisions, and action items.
 4.  Synthesize this information into a clear and structured Markdown format, including:
