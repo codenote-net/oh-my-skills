@@ -1,0 +1,104 @@
+---
+name: video-to-minutes
+description: Extracts audio and images from a video file, transcribes the audio, and generates meeting minutes and a summary.
+---
+
+# Video to Minutes Skill
+
+This skill guides the process of converting a video recording of a meeting into a structured Markdown file containing meeting minutes, a summary, and references to captured images.
+
+## Workflow
+
+The process is sequential. Follow these steps in order.
+
+### 1. Prerequisite Check
+
+This workflow depends on two command-line tools: `ffmpeg` and `whisper`.
+
+First, check if these tools are installed using the `which` command.
+
+```bash
+which ffmpeg
+which whisper
+```
+
+- If both commands return a path (e.g., `/opt/homebrew/bin/ffmpeg`), the tools are installed. Proceed to the next step.
+- If either command fails or returns "not found", the tool is missing. Ask the user for permission to install them. For macOS with Homebrew, use the following commands. If `brew` is not found, guide the user to install Homebrew first.
+
+```bash
+# Check for whisper's correct package name
+brew search whisper
+# The correct package is likely openai-whisper. Install both tools.
+brew install ffmpeg openai-whisper
+```
+Confirm successful installation before proceeding.
+
+### 2. Get User Input
+
+- **Video File Path:** Ask the user for the full path to the video file they want to process.
+- **Capture Interval:** Ask the user for the desired interval in seconds for capturing images (e.g., 60 for every minute, 300 for every 5 minutes).
+
+### 3. Audio Extraction
+
+Use `ffmpeg` to extract the audio from the video file into a `wav` file format, which is ideal for transcription. Save it in the current working directory.
+
+**Command Template:**
+```bash
+ffmpeg -i "<VIDEO_FILE_PATH>" -vn -acodec pcm_s16le -ar 16000 -ac 1 meeting_audio.wav
+```
+- Replace `<VIDEO_FILE_PATH>` with the path provided by the user.
+- The output file will be `meeting_audio.wav`.
+
+### 4. Audio Transcription (User-Assisted)
+
+This is the most critical and time-consuming step. The `whisper` command can take a long time and may time out in the agent's execution environment.
+
+**Do not run the `whisper` command directly.** Instead, follow this procedure:
+
+1.  Explain to the user that the transcription process is lengthy and requires them to run a command in their own terminal.
+2.  Provide them with the exact command to run. A good default is to use the `medium` model for a balance of speed and accuracy, and specify the language if known.
+
+**Command to provide to the user:**
+```bash
+whisper meeting_audio.wav --model medium --language Japanese
+```
+(Adjust the language parameter as needed based on the meeting's language).
+
+3.  Ask the user to execute this command in a separate terminal window and wait for it to complete. It will create several files, including `meeting_audio.txt`.
+4.  Use the `ask_user` tool to wait for the user's confirmation that the file has been created successfully before proceeding.
+
+### 5. Image Extraction
+
+While the user is running the transcription (or after), you can extract the images.
+
+1.  Create a directory to store the images.
+    ```bash
+    mkdir captures
+    ```
+2.  Use `ffmpeg` to extract frames from the video at the interval specified by the user.
+
+**Command Template:**
+```bash
+ffmpeg -i "<VIDEO_FILE_PATH>" -vf fps=1/<INTERVAL_IN_SECONDS> captures/capture_%03d.png
+```
+- Replace `<VIDEO_FILE_PATH>` with the user's video path.
+- Replace `<INTERVAL_IN_SECONDS>` with the interval provided by the user.
+
+### 6. Generate Meeting Minutes
+
+1.  Once the user confirms `meeting_audio.txt` is created, read the file's content using `read_file`.
+2.  List the newly created image files in the `captures` directory.
+3.  Analyze the transcript to identify participants, key topics, decisions, and action items.
+4.  Synthesize this information into a clear and structured Markdown format, including:
+    - A high-level summary.
+    - A detailed "Meeting Minutes" section with participants, purpose, key decisions, and next actions.
+    - A "Reference: List of Capture Images" section listing all the files in the `captures` directory.
+
+### 7. Save the Output
+
+Save the final generated Markdown content to a file named `meeting_minutes.md`.
+
+```bash
+write_file(file_path="meeting_minutes.md", content="<MARKDOWN_CONTENT>")
+```
+Inform the user that the process is complete and the file has been saved.
