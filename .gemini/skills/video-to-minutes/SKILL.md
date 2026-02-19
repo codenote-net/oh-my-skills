@@ -51,13 +51,32 @@ ffmpeg -i "<VIDEO_FILE_PATH>" -vn -acodec pcm_s16le -ar 16000 -ac 1 meeting_audi
 
 ### 4. Audio Transcription (Automated)
 
-The skill will automatically run the `whisper` command to transcribe the extracted audio. This process can be lengthy, and the agent will wait for its completion.
+The skill will automatically run the `whisper` command to transcribe the extracted audio. Since Whisper transcription is time-intensive, this step uses background execution to prevent tool timeouts.
 
-**Command to be executed by the agent:**
+**Important:** For videos longer than 5 minutes or audio files exceeding 20MB, you **must** run the transcription in the background. Running it in the foreground risks process cancellation due to tool timeouts.
+
+**Step 4a: Start transcription in the background**
+
+Redirect output to a log file and run in the background using `is_background: true`:
+
 ```bash
-whisper meeting_audio.wav --language ja --model turbo
+whisper meeting_audio.wav --language ja --model turbo > meeting_audio.log 2>&1
 ```
-(The skill will use `meeting_audio.wav` and the specified language and model. The language and model can be adjusted if required, but the default will be Japanese and 'turbo' model as per the user's suggestion.)
+(Execute with `is_background: true`. The language and model can be adjusted if required, but the default will be Japanese and 'turbo' model.)
+
+**Step 4b: Monitor progress and wait for completion**
+
+Monitor the log file to track progress and detect completion:
+
+```bash
+tail -f meeting_audio.log
+```
+
+The transcription is complete when you see output indicating Whisper has finished processing (e.g., the log file stops updating and the background process has exited). You can also check if the process is still running:
+
+```bash
+ps aux | grep whisper
+```
 
 The `whisper` command will generate several files, including `meeting_audio.txt` in the current working directory. The skill will automatically detect this file upon completion.
 
