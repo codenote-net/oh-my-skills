@@ -13,23 +13,23 @@ The process is sequential. Follow these steps in order.
 
 ### 1. Prerequisite Check
 
-This workflow depends on two command-line tools: `ffmpeg` and `whisper`.
+This workflow depends on `ffmpeg` (command-line tool) and `faster-whisper` (Python package).
 
-First, check if these tools are installed using the `which` command.
+First, check if these are installed:
 
 ```bash
 which ffmpeg
-which whisper
+python -c "from faster_whisper import WhisperModel; print('faster-whisper is installed')"
 ```
 
-- If both commands return a path (e.g., `/opt/homebrew/bin/ffmpeg`), the tools are installed. Proceed to the next step.
-- If either command fails or returns "not found", the tool is missing. Ask the user for permission to install them. For macOS with Homebrew, use the following commands. If `brew` is not found, guide the user to install Homebrew first.
+- If both commands succeed, the tools are installed. Proceed to the next step.
+- If either fails, the tool is missing. Ask the user for permission to install them.
 
 ```bash
-# Check for whisper's correct package name
-brew search whisper
-# The correct package is likely openai-whisper. Install both tools.
-brew install ffmpeg openai-whisper
+# Install ffmpeg (macOS with Homebrew)
+brew install ffmpeg
+# Install faster-whisper
+pip install faster-whisper
 ```
 Confirm successful installation before proceeding.
 
@@ -51,7 +51,7 @@ ffmpeg -i "<VIDEO_FILE_PATH>" -vn -acodec pcm_s16le -ar 16000 -ac 1 meeting_audi
 
 ### 4. Audio Transcription (Automated)
 
-The skill will automatically run the `whisper` command to transcribe the extracted audio. Since Whisper transcription is time-intensive, this step uses background execution to prevent tool timeouts.
+The skill uses `faster-whisper` via a Python script to transcribe the extracted audio. Since transcription is time-intensive, this step uses background execution to prevent tool timeouts.
 
 **Important:** For videos longer than 5 minutes or audio files exceeding 20MB, you **must** run the transcription in the background. Running it in the foreground risks process cancellation due to tool timeouts.
 
@@ -60,25 +60,25 @@ The skill will automatically run the `whisper` command to transcribe the extract
 Redirect output to a log file and run in the background using `is_background: true`:
 
 ```bash
-whisper meeting_audio.wav --language ja --model turbo > meeting_audio.log 2>&1
+python scripts/transcribe.py meeting_audio.wav --language ja --model large-v3 > meeting_audio.log 2>&1
 ```
-(Execute with `is_background: true`. The language and model can be adjusted if required, but the default will be Japanese and 'turbo' model.)
+(Execute with `is_background: true`. The language and model can be adjusted if required, but the default will be Japanese and 'large-v3' model.)
 
 **Step 4b: Monitor progress and wait for completion**
 
-Monitor the log file to track progress and detect completion:
+Monitor the log file to track progress and detect completion. The script outputs `[start -> end] text` for each segment in real-time:
 
 ```bash
 tail -f meeting_audio.log
 ```
 
-The transcription is complete when you see output indicating Whisper has finished processing (e.g., the log file stops updating and the background process has exited). You can also check if the process is still running:
+The transcription is complete when you see `Transcription saved to` in the log. You can also check if the process is still running:
 
 ```bash
-ps aux | grep whisper
+ps aux | grep transcribe.py
 ```
 
-The `whisper` command will generate several files, including `meeting_audio.txt` in the current working directory. The skill will automatically detect this file upon completion.
+The script will generate `meeting_audio.txt` in the current working directory. The skill will automatically detect this file upon completion.
 
 ### 4.5. Detect Transcription File
 
