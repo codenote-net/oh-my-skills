@@ -52,7 +52,7 @@ Extracts audio and images from a video file, transcribes the audio using Whisper
 
 **Location:** `.gemini/skills/video-to-minutes/`
 
-**Dependencies:** `ffmpeg`, `openai-whisper`
+**Dependencies:** `ffmpeg`, `faster-whisper`
 
 ## Installation
 
@@ -65,7 +65,7 @@ Extracts audio and images from a video file, transcribes the audio using Whisper
 
 3. Install Python dependencies as needed:
    ```bash
-   pip install PyPDF2 openpyxl openai-whisper
+   pip install PyPDF2 openpyxl faster-whisper
    ```
 
 ## Project Structure
@@ -86,7 +86,9 @@ oh-my-skills/
 │       │       ├── excel_template_guide.md
 │       │       └── parsing_rules_guide.md
 │       └── video-to-minutes/
-│           └── SKILL.md
+│           ├── SKILL.md
+│           └── scripts/
+│               └── transcribe.py
 ├── .claude/
 │   └── settings.local.json
 ├── .qodo/
