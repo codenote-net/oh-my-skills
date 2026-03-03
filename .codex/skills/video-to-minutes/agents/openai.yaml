@@ -1,0 +1,4 @@
+interface:
+  display_name: "Video to Minutes"
+  short_description: "Convert meeting videos into structured minutes"
+  default_prompt: "Use $video-to-minutes to convert this meeting video into concise minutes."
