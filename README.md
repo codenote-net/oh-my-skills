@@ -50,7 +50,14 @@ python scripts/text_to_excel.py <input.txt> <output.xlsx> --template <template.x
 
 Extracts audio and images from a video file, transcribes the audio using Whisper, and generates structured meeting minutes.
 
-**Location:** `.gemini/skills/video-to-minutes/`
+**Location:**
+- Gemini CLI: `.gemini/skills/video-to-minutes/`
+- Codex: `.codex/skills/video-to-minutes/`
+
+**Usage (Codex):**
+```text
+Use $video-to-minutes to convert this meeting video into concise minutes.
+```
 
 **Dependencies:** `ffmpeg`, `faster-whisper`
 
@@ -72,6 +79,14 @@ Extracts audio and images from a video file, transcribes the audio using Whisper
 
 ```
 oh-my-skills/
+├── .codex/
+│   └── skills/
+│       └── video-to-minutes/
+│           ├── SKILL.md
+│           ├── agents/
+│           │   └── openai.yaml
+│           └── scripts/
+│               └── transcribe.py
 ├── .gemini/
 │   └── skills/
 │       ├── pdf-to-text/
