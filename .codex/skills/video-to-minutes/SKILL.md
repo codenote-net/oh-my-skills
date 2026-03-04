@@ -33,6 +33,8 @@ Ask for:
 - Transcription language code (default `ja`).
 - Optional CPU thread count for transcription (`cpu_threads`, default auto).
 - Optional batch size for batched inference (`batch_size`, default disabled).
+- Optional max parallel transcription processes (`max_concurrent`, default auto by RAM).
+- Optional coordination id when multiple jobs run in parallel (`coordination_id`, default `video-to-minutes-transcribe`).
 - Important proper nouns (people, company names, product names).
 - Output Markdown path (default `meeting_minutes.md`).
 
@@ -56,6 +58,8 @@ python3 scripts/transcribe.py meeting_audio.wav \
   --model large-v3 \
   --cpu-threads <CPU_THREADS_OR_0> \
   --batch-size <BATCH_SIZE_OR_0> \
+  --max-concurrent <MAX_CONCURRENT_OR_0> \
+  --coordination-id "<COORDINATION_ID>" \
   --output meeting_audio.txt \
   > meeting_audio.log 2>&1
 ```
@@ -63,9 +67,14 @@ python3 scripts/transcribe.py meeting_audio.wav \
 For long videos, run in background and monitor progress:
 
 ```bash
-python3 scripts/transcribe.py meeting_audio.wav --language "<LANGUAGE_CODE>" --model large-v3 --cpu-threads <CPU_THREADS_OR_0> --batch-size <BATCH_SIZE_OR_0> --output meeting_audio.txt > meeting_audio.log 2>&1 &
+python3 scripts/transcribe.py meeting_audio.wav --language "<LANGUAGE_CODE>" --model large-v3 --cpu-threads <CPU_THREADS_OR_0> --batch-size <BATCH_SIZE_OR_0> --max-concurrent <MAX_CONCURRENT_OR_0> --coordination-id "<COORDINATION_ID>" --output meeting_audio.txt > meeting_audio.log 2>&1 &
 tail -f meeting_audio.log
 ```
+
+Notes:
+- `--max-concurrent 0` means auto sizing from available RAM (default).
+- Jobs with the same `--coordination-id` share one concurrency limit.
+- If needed, `--disable-concurrency-guard` turns off this memory guard.
 
 Wait until the log includes `Transcription saved to` and confirm `meeting_audio.txt` exists.
 
