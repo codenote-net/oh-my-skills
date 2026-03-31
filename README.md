@@ -66,11 +66,23 @@ Use $video-to-minutes to convert this meeting video into concise minutes.
 Investigates security incidents across GitHub enterprise, organization, or repository scope and documents findings in tracking issues.
 
 **Location:**
+- Claude Code: `.claude/skills/gh-security-scan/`
 - Codex: `.codex/skills/gh-security-scan/`
+- Gemini CLI: `.gemini/skills/gh-security-scan/`
+
+**Usage (Claude Code):**
+```text
+/gh-security-scan --org my-org "CVE-2025-12345: check for vulnerable versions"
+```
 
 **Usage (Codex):**
 ```text
 Use $gh-security-scan with --org my-org "CVE-2025-12345: check for vulnerable versions".
+```
+
+**Usage (Gemini CLI):**
+```text
+Check for vulnerable library versions related to CVE-2025-12345 in the --org my-org
 ```
 
 **Dependencies:** GitHub access via Codex GitHub app or `gh`
@@ -93,6 +105,14 @@ Use $gh-security-scan with --org my-org "CVE-2025-12345: check for vulnerable ve
 
 ```
 oh-my-skills/
+├── .claude/
+│   ├── settings.local.json
+│   └── skills/
+│       ├── gh-security-scan/
+│       │   ├── SKILL.md
+│       │   └── references/
+│       │       └── investigation_patterns.md
+│       └── security-scan/
 ├── .codex/
 │   └── skills/
 │       ├── gh-security-scan/
@@ -107,6 +127,10 @@ oh-my-skills/
 │               └── transcribe.py
 ├── .gemini/
 │   └── skills/
+│       ├── gh-security-scan/
+│       │   ├── SKILL.md
+│       │   └── references/
+│       │       └── investigation_patterns.md
 │       ├── pdf-to-text/
 │       │   ├── SKILL.md
 │       │   └── scripts/
@@ -122,12 +146,11 @@ oh-my-skills/
 │           ├── SKILL.md
 │           └── scripts/
 │               └── transcribe.py
-├── .claude/
-│   └── settings.local.json
 ├── .qodo/
 │   ├── agents/
 │   └── workflows/
-└── LICENSE
+├── LICENSE
+└── README.md
 ```
 
 ## Contributing
