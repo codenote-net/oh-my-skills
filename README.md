@@ -61,6 +61,20 @@ Use $video-to-minutes to convert this meeting video into concise minutes.
 
 **Dependencies:** `ffmpeg`, `faster-whisper`
 
+### gh-security-scan
+
+Investigates security incidents across GitHub enterprise, organization, or repository scope and documents findings in tracking issues.
+
+**Location:**
+- Codex: `.codex/skills/gh-security-scan/`
+
+**Usage (Codex):**
+```text
+Use $gh-security-scan with --org my-org "CVE-2025-12345: check for vulnerable versions".
+```
+
+**Dependencies:** GitHub access via Codex GitHub app or `gh`
+
 ## Installation
 
 1. Clone this repository:
@@ -81,6 +95,10 @@ Use $video-to-minutes to convert this meeting video into concise minutes.
 oh-my-skills/
 ├── .codex/
 │   └── skills/
+│       ├── gh-security-scan/
+│       │   ├── SKILL.md
+│       │   └── references/
+│       │       └── investigation-patterns-guide.md
 │       └── video-to-minutes/
 │           ├── SKILL.md
 │           ├── agents/
