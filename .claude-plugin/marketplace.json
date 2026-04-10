@@ -1,0 +1,21 @@
+{
+  "name": "codenote",
+  "owner": {
+    "name": "codenote-net"
+  },
+  "metadata": {
+    "description": "Codenote skills for security scanning and development workflows.",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "codenote",
+      "description": "Codenote skills for security scanning and development workflows.",
+      "version": "1.0.0",
+      "author": {
+        "name": "codenote-net"
+      },
+      "source": "./plugins/codenote"
+    }
+  ]
+}

@@ -11,9 +11,9 @@ The user provides:
 2. **Topic** — a description of the security concern to investigate (e.g. compromised package name, CVE ID, vulnerability details)
 
 Examples:
-- `/gh-security-scan --enterprise acme "axios npm compromise: check for axios@1.14.1 or axios@0.30.4 in lockfiles"`
-- `/gh-security-scan --org my-org "CVE-2025-12345: log4j vulnerable versions 2.0-2.14.1"`
-- `/gh-security-scan --repo my-org/my-app "Check for exposed AWS credentials in config files"`
+- `/codenote:gh-security-scan --enterprise acme "axios npm compromise: check for axios@1.14.1 or axios@0.30.4 in lockfiles"`
+- `/codenote:gh-security-scan --org my-org "CVE-2025-12345: log4j vulnerable versions 2.0-2.14.1"`
+- `/codenote:gh-security-scan --repo my-org/my-app "Check for exposed AWS credentials in config files"`
 
 ## Language
 

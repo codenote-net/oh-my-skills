@@ -8,19 +8,19 @@ Oh My Skills provides reusable skills for AI-powered development tools. These sk
 
 ## Supported AI Tools
 
-| Tool | Config Directory | Status |
-|------|------------------|--------|
-| [Claude Code](https://github.com/anthropics/claude-code) | `.claude/` | Active |
-| [Codex](https://github.com/openai/codex) | `.codex/` | Active |
-| [Gemini CLI](https://github.com/google-gemini/gemini-cli) | `.gemini/` | Active |
+| Tool | Namespace | Config Directory | Status |
+|------|-----------|------------------|--------|
+| [Claude Code](https://github.com/anthropics/claude-code) | `codenote:` (plugin) | `plugins/codenote/` | Active |
+| [Codex](https://github.com/openai/codex) | `codenote:` (plugin) | `.codex/` | Active |
+| [Gemini CLI](https://github.com/google-gemini/gemini-cli) | `codenote-` (prefix) | `.gemini/` | Active |
 
 ## Available Skills
 
-### pdf-to-text
+### codenote-pdf-to-text
 
 Extracts text content from PDF files using PyPDF2.
 
-**Location:** `.gemini/skills/pdf-to-text/`
+**Location:** `.gemini/skills/codenote-pdf-to-text/`
 
 **Usage:**
 ```bash
@@ -29,11 +29,11 @@ python scripts/extract_text.py <pdf_file_path>
 
 **Dependencies:** `PyPDF2`
 
-### text-to-excel
+### codenote-text-to-excel
 
 Converts text data (especially Markdown tables) into Excel spreadsheets using openpyxl.
 
-**Location:** `.gemini/skills/text-to-excel/`
+**Location:** `.gemini/skills/codenote-text-to-excel/`
 
 **Usage:**
 ```bash
@@ -46,38 +46,38 @@ python scripts/text_to_excel.py <input.txt> <output.xlsx> --template <template.x
 
 **Dependencies:** `openpyxl`
 
-### video-to-minutes
+### codenote:video-to-minutes
 
 Extracts audio and images from a video file, transcribes the audio using Whisper, and generates structured meeting minutes.
 
 **Location:**
-- Gemini CLI: `.gemini/skills/video-to-minutes/`
+- Gemini CLI: `.gemini/skills/codenote-video-to-minutes/`
 - Codex: `.codex/skills/video-to-minutes/`
 
 **Usage (Codex):**
 ```text
-Use $video-to-minutes to convert this meeting video into concise minutes.
+Use $codenote:video-to-minutes to convert this meeting video into concise minutes.
 ```
 
 **Dependencies:** `ffmpeg`, `faster-whisper`
 
-### gh-security-scan
+### codenote:gh-security-scan
 
 Investigates security incidents across GitHub enterprise, organization, or repository scope and documents findings in tracking issues.
 
 **Location:**
-- Claude Code: `.claude/skills/gh-security-scan/`
+- Claude Code: `plugins/codenote/skills/gh-security-scan/`
 - Codex: `.codex/skills/gh-security-scan/`
-- Gemini CLI: `.gemini/skills/gh-security-scan/`
+- Gemini CLI: `.gemini/skills/codenote-gh-security-scan/`
 
 **Usage (Claude Code):**
 ```text
-/gh-security-scan --org my-org "CVE-2025-12345: check for vulnerable versions"
+/codenote:gh-security-scan --org my-org "CVE-2025-12345: check for vulnerable versions"
 ```
 
 **Usage (Codex):**
 ```text
-Use $gh-security-scan with --org my-org "CVE-2025-12345: check for vulnerable versions".
+Use $codenote:gh-security-scan with --org my-org "CVE-2025-12345: check for vulnerable versions".
 ```
 
 **Usage (Gemini CLI):**
@@ -89,31 +89,47 @@ Check for vulnerable library versions related to CVE-2025-12345 in the --org my-
 
 ## Installation
 
-1. Clone this repository:
-   ```bash
-   git clone https://github.com/codenote-net/oh-my-skills.git
-   ```
+### Claude Code (plugin)
 
-2. Copy the desired skill directories to your project's AI tool configuration folder.
+```bash
+# Load as a plugin (skills appear as codenote:skill-name)
+claude --plugin-dir ./plugins/codenote
+```
 
-3. Install Python dependencies as needed:
-   ```bash
-   pip install PyPDF2 openpyxl faster-whisper
-   ```
+### Codex
+
+Copy `.codex/` to your project root. The `.codex-plugin/plugin.json` provides the `codenote:` namespace automatically.
+
+### Gemini CLI
+
+Copy `.gemini/skills/codenote-*/` to your project's `.gemini/skills/` directory.
+
+### Python dependencies
+
+```bash
+pip install PyPDF2 openpyxl faster-whisper
+```
 
 ## Project Structure
 
 ```
 oh-my-skills/
-├── .claude/
-│   ├── settings.local.json
-│   └── skills/
-│       ├── gh-security-scan/
-│       │   ├── SKILL.md
-│       │   └── references/
-│       │       └── investigation_patterns.md
-│       └── security-scan/
+├── .claude-plugin/
+│   └── marketplace.json              # Claude Code marketplace manifest
+├── plugins/
+│   └── codenote/                     # Claude Code plugin (namespace: codenote:)
+│       ├── .claude-plugin/
+│       │   └── plugin.json
+│       ├── skills/
+│       │   └── gh-security-scan/
+│       │       ├── SKILL.md
+│       │       └── references/
+│       │           └── investigation_patterns.md
+│       └── commands/
+│           └── gh-security-scan.md
 ├── .codex/
+│   ├── .codex-plugin/
+│   │   └── plugin.json               # Codex plugin (namespace: codenote:)
 │   └── skills/
 │       ├── gh-security-scan/
 │       │   ├── SKILL.md
@@ -126,29 +142,26 @@ oh-my-skills/
 │           └── scripts/
 │               └── transcribe.py
 ├── .gemini/
-│   └── skills/
-│       ├── gh-security-scan/
+│   └── skills/                        # Gemini CLI (prefix: codenote-)
+│       ├── codenote-gh-security-scan/
 │       │   ├── SKILL.md
 │       │   └── references/
 │       │       └── investigation_patterns.md
-│       ├── pdf-to-text/
+│       ├── codenote-pdf-to-text/
 │       │   ├── SKILL.md
 │       │   └── scripts/
 │       │       └── extract_text.py
-│       ├── text-to-excel/
+│       ├── codenote-text-to-excel/
 │       │   ├── SKILL.md
 │       │   ├── scripts/
 │       │   │   └── text_to_excel.py
 │       │   └── references/
 │       │       ├── excel_template_guide.md
 │       │       └── parsing_rules_guide.md
-│       └── video-to-minutes/
+│       └── codenote-video-to-minutes/
 │           ├── SKILL.md
 │           └── scripts/
 │               └── transcribe.py
-├── .qodo/
-│   ├── agents/
-│   └── workflows/
 ├── LICENSE
 └── README.md
 ```

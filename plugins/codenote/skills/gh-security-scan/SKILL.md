@@ -38,14 +38,14 @@ A Claude Code skill that automates security vulnerability investigation across G
 Invoke via Claude Code:
 
 ```
-/gh-security-scan --enterprise acme "Investigate compromised npm package foo@1.2.3"
-/gh-security-scan --org my-org "CVE-2025-12345: Check for vulnerable library versions"
-/gh-security-scan --repo my-org/my-app "Search for hardcoded API keys"
+/codenote:gh-security-scan --enterprise acme "Investigate compromised npm package foo@1.2.3"
+/codenote:gh-security-scan --org my-org "CVE-2025-12345: Check for vulnerable library versions"
+/codenote:gh-security-scan --repo my-org/my-app "Search for hardcoded API keys"
 ```
 
 ## Resources
 
-- **Command file**: `/.claude/commands/gh-security-scan.md`
+- **Command file**: `/plugins/codenote/commands/gh-security-scan.md`
 - **References**: `references/` — guides for common investigation patterns
 
 ## Investigation Patterns

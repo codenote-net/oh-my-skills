@@ -1,5 +1,5 @@
 ---
-name: text-to-excel
+name: codenote-text-to-excel
 description: Converts text data into an Excel spreadsheet (.xlsx). Use this skill to transform unstructured or semi-structured text (e.g., from PDF extractions, logs, reports) into a structured Excel format, optionally utilizing a pre-defined Excel template.
 ---
 
