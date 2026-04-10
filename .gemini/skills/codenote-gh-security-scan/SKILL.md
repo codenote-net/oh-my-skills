@@ -1,5 +1,5 @@
 ---
-name: gh-security-scan
+name: codenote-gh-security-scan
 description: "Investigates security vulnerabilities across GitHub Enterprise/Organization/Repository hierarchies, creates tracking issues, and reports findings via the gh CLI."
 ---
 

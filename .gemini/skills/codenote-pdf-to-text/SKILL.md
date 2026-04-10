@@ -1,5 +1,5 @@
 ---
-name: pdf-to-text
+name: codenote-pdf-to-text
 description: Extracts text content from PDF files. Use this skill when you need to convert a PDF document into plain text for further processing or analysis.
 ---
 

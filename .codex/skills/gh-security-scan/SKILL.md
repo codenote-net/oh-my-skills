@@ -21,9 +21,9 @@ The user should provide:
 
 Examples:
 
-- `Use $gh-security-scan with --enterprise acme "axios compromise: check for axios@1.14.1 or axios@0.30.4 in lockfiles"`
-- `Use $gh-security-scan with --org my-org "CVE-2025-12345: check for vulnerable versions"`
-- `Use $gh-security-scan with --repo my-org/my-app "Search for hardcoded API keys"`
+- `Use $codenote:gh-security-scan with --enterprise acme "axios compromise: check for axios@1.14.1 or axios@0.30.4 in lockfiles"`
+- `Use $codenote:gh-security-scan with --org my-org "CVE-2025-12345: check for vulnerable versions"`
+- `Use $codenote:gh-security-scan with --repo my-org/my-app "Search for hardcoded API keys"`
 
 ## Language
 

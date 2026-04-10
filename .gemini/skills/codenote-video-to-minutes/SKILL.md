@@ -1,5 +1,5 @@
 ---
-name: video-to-minutes
+name: codenote-video-to-minutes
 description: Extracts audio and images from a video file, transcribes the audio, and generates meeting minutes and a summary.
 ---
 
