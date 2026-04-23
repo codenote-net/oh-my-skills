@@ -1,6 +1,6 @@
 ---
 name: video-to-minutes
-description: Convert meeting recordings into structured Markdown minutes by extracting audio and screenshots, transcribing speech with faster-whisper, and drafting summary/decisions/action items. Use when Codex is asked to turn a video file (mp4/mov/mkv/webm) into meeting notes, summaries, or minutes.
+description: Convert meeting recordings into structured Markdown minutes by extracting audio and screenshots, transcribing speech with faster-whisper, and drafting summary/decisions/action items.
 ---
 
 # Video to Minutes
@@ -129,4 +129,4 @@ Report completion with:
 ## Resources
 
 ### scripts/
-- `transcribe.py`: faster-whisper based transcription utility that supports VAD, an initial prompt, optional cross-segment conditioning, and saves timestamped transcript output by default.
+- `transcribe.py`: faster-whisper based transcription utility that prints progress and saves timestamped transcript output by default.
