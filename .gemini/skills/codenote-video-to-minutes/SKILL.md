@@ -37,6 +37,9 @@ Confirm successful installation before proceeding.
 
 - **Video File Path:** Ask the user for the full path to the video file they want to process.
 - **Capture Interval:** Ask the user for the desired interval in seconds for capturing images (e.g., 60 for every minute, 300 for every 5 minutes). Suggest a default of `60` seconds. If the user does not specify an interval, ask for confirmation to use `60` seconds.
+- **Language Code:** Ask for the transcription language code. Suggest a default of `ja`.
+- **Proper Nouns:** Ask for important people, company, product, and project names to use as a transcription prompt.
+- **Advanced Transcription Options:** Collect optional `cpu_threads`, `batch_size`, `max_concurrent`, and `coordination_id` inputs if the user wants to override defaults.
 
 ### 3. Audio Extraction
 
@@ -57,12 +60,17 @@ The skill uses `faster-whisper` via a Python script to transcribe the extracted 
 
 **Step 4a: Start transcription in the background**
 
+Build an initial prompt from the proper nouns you collected and run the safer default mode for meetings:
+- `--vad-filter`
+- omit `--condition-on-previous-text` so each segment is decoded independently
+- timestamped transcript output remains enabled by default
+
 Redirect output to a log file and run in the background using `is_background: true`:
 
 ```bash
-python scripts/transcribe.py meeting_audio.wav --language ja --model large-v3 > meeting_audio.log 2>&1
+python3 scripts/transcribe.py meeting_audio.wav --language "<LANGUAGE_CODE>" --model large-v3 --vad-filter --initial-prompt "<PROPER_NOUNS_AND_DOMAIN_TERMS>" --cpu-threads <CPU_THREADS_OR_0> --batch-size <BATCH_SIZE_OR_0> --max-concurrent <MAX_CONCURRENT_OR_0> --coordination-id "<COORDINATION_ID>" --output meeting_audio.txt > meeting_audio.log 2>&1
 ```
-(Execute with `is_background: true`. The language and model can be adjusted if required, but the default will be Japanese and 'large-v3' model.)
+(Execute with `is_background: true`.)
 
 **Step 4b: Monitor progress and wait for completion**
 
@@ -78,7 +86,7 @@ The transcription is complete when you see `Transcription saved to` in the log. 
 ps aux | grep transcribe.py
 ```
 
-The script will generate `meeting_audio.txt` in the current working directory. The skill will automatically detect this file upon completion.
+The script will generate `meeting_audio.txt` in the current working directory, with timestamps by default. Use `--no-timestamps` only if a downstream consumer requires plain text. Add `--condition-on-previous-text` only when the audio is already clean and you want stronger cross-segment continuity.
 
 ### 4.5. Detect Transcription File
 
@@ -102,10 +110,6 @@ ffmpeg -i "<VIDEO_FILE_PATH>" -vf fps=1/<INTERVAL_IN_SECONDS> captures/capture_%
 ```
 - Replace `<VIDEO_FILE_PATH>` with the user's video path.
 - Replace `<INTERVAL_IN_SECONDS>` with the interval provided by the user.
-
-### 5.5. Collect Proper Nouns
-
-Before generating the meeting minutes, the skill will ask the user to provide a list of key proper nouns (e.g., names of people, companies, products like "重岡", "株式会社ROUTE06", "ProjectX") that are likely to appear in the meeting. This information will be incorporated into the prompt for generating the minutes to improve accuracy and reduce errors in transcription and summarization.
 
 ### 6. Generate Meeting Minutes
 
